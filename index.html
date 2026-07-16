@@ -115,6 +115,26 @@
     font-size:.8rem; text-decoration:underline wavy var(--ca); cursor:pointer; color:var(--ink);
   }
 
+  /* ---------- race to 100 ---------- */
+  .mountain-card{
+    background:linear-gradient(180deg,#CDEAF5 0%,#EAF6FA 55%,#FFF6E9 100%);
+    border:3px solid var(--ink); border-radius:16px; overflow:hidden;
+    box-shadow:5px 6px 0 rgba(43,33,24,.9); position:relative;
+  }
+  .mountain-card svg{display:block; width:100%; height:auto;}
+  .cloud{animation:drift 26s linear infinite;}
+  .cloud.c2{animation-duration:38s; animation-delay:-14s;}
+  @keyframes drift{from{transform:translateX(-140px)}to{transform:translateX(760px)}}
+  .climber{transition:transform 1.4s cubic-bezier(.22,1.1,.36,1);}
+  .climber .bob{animation:climb 1.8s ease-in-out infinite;}
+  .climber.co .bob{animation-delay:.2s} .climber.ca .bob{animation-delay:.6s}
+  @keyframes climb{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  .summit-flag{animation:wave 2.6s ease-in-out infinite; transform-origin:305px 52px;}
+  @keyframes wave{0%,100%{transform:skewY(0deg)}50%{transform:skewY(-4deg)}}
+  .race-caption{
+    text-align:center; font-size:.8rem; font-weight:600; padding:10px 14px 14px; opacity:.85;
+  }
+
   /* ---------- hall of fame ---------- */
   .stickers{display:flex; gap:18px; flex-wrap:wrap; justify-content:center; padding:10px 0 4px;}
   .sticker{
@@ -262,7 +282,78 @@
   <svg class="squig" width="190" height="10" viewBox="0 0 190 10"><path d="M2 6 Q 12 1, 22 6 T 42 6 T 62 6 T 82 6 T 102 6 T 122 6 T 142 6 T 162 6 T 182 6" stroke="#F7B32B" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
   <div class="board" id="board"></div>
   <button class="privacy-btn" id="privacyBtn">🙈 “might be better if California’s numbers stay private”</button>
-  <div></div>
+
+  <h2>⛰️ Race to 100</h2>
+  <svg class="squig" width="160" height="10" viewBox="0 0 160 10"><path d="M2 6 Q 12 1, 22 6 T 42 6 T 62 6 T 82 6 T 102 6 T 122 6 T 142 6" stroke="#2E7D46" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
+  <div class="mountain-card">
+    <svg viewBox="0 0 700 420" xmlns="http://www.w3.org/2000/svg" aria-label="Race to 100 mountain">
+      <!-- sun -->
+      <circle cx="72" cy="64" r="30" fill="#F7B32B" stroke="#2B2118" stroke-width="3"/>
+      <g stroke="#2B2118" stroke-width="3" stroke-linecap="round">
+        <line x1="72" y1="16" x2="72" y2="28"/><line x1="72" y1="100" x2="72" y2="112"/>
+        <line x1="24" y1="64" x2="36" y2="64"/><line x1="108" y1="64" x2="120" y2="64"/>
+        <line x1="38" y1="30" x2="47" y2="39"/><line x1="97" y1="89" x2="106" y2="98"/>
+        <line x1="106" y1="30" x2="97" y2="39"/><line x1="47" y1="89" x2="38" y2="98"/>
+      </g>
+      <!-- clouds -->
+      <g class="cloud" fill="#fffdf7" stroke="#2B2118" stroke-width="2.5">
+        <ellipse cx="150" cy="90" rx="42" ry="17"/><ellipse cx="185" cy="80" rx="30" ry="14"/>
+      </g>
+      <g class="cloud c2" fill="#fffdf7" stroke="#2B2118" stroke-width="2.5">
+        <ellipse cx="60" cy="150" rx="36" ry="14"/><ellipse cx="90" cy="142" rx="24" ry="11"/>
+      </g>
+      <!-- mountain -->
+      <path d="M 20 400 Q 120 340 190 260 Q 250 190 305 70 Q 315 52 328 72 Q 390 190 460 265 Q 550 350 680 400 Z"
+            fill="#E7D6B8" stroke="#2B2118" stroke-width="4" stroke-linejoin="round"/>
+      <!-- snow cap -->
+      <path d="M 270 145 Q 300 80 305 70 Q 315 52 328 72 Q 345 105 362 140 Q 340 128 330 148 Q 315 122 300 150 Q 285 132 270 145 Z"
+            fill="#fffdf7" stroke="#2B2118" stroke-width="3.5" stroke-linejoin="round"/>
+      <!-- trees at base -->
+      <g fill="#2E7D46" stroke="#2B2118" stroke-width="2.5">
+        <path d="M 590 400 l 14 -34 l 14 34 z"/><path d="M 620 400 l 17 -44 l 17 44 z"/>
+      </g>
+      <text x="40" y="330" font-size="22">🐐</text>
+      <!-- trail (dashed) : also used to position climbers -->
+      <path id="trailPath" d="M 60 396 C 150 380 200 360 230 330 C 270 290 220 275 260 240 C 300 205 330 200 300 165 C 280 140 300 110 316 78"
+            fill="none" stroke="#2B2118" stroke-width="3" stroke-dasharray="2 11" stroke-linecap="round" opacity=".65"/>
+      <!-- altitude signs -->
+      <g font-family="inherit" font-weight="bold" font-size="13" fill="#2B2118">
+        <text x="238" y="352" transform="rotate(-6 238 352)">25</text>
+        <text x="242" y="262" transform="rotate(5 242 262)">50</text>
+        <text x="318" y="192" transform="rotate(-5 318 192)">75</text>
+      </g>
+      <!-- base camp sign -->
+      <g>
+        <line x1="52" y1="412" x2="52" y2="380" stroke="#2B2118" stroke-width="3.5"/>
+        <rect x="20" y="366" width="80" height="22" rx="4" fill="#F7B32B" stroke="#2B2118" stroke-width="3"/>
+        <text x="60" y="382" text-anchor="middle" font-size="12" font-weight="bold" fill="#2B2118">BASE CAMP</text>
+      </g>
+      <!-- summit flag -->
+      <g class="summit-flag">
+        <line x1="316" y1="78" x2="316" y2="30" stroke="#2B2118" stroke-width="3.5"/>
+        <path d="M 316 30 L 358 40 L 316 52 Z" fill="#F2603B" stroke="#2B2118" stroke-width="3" stroke-linejoin="round"/>
+      </g>
+      <text x="340" y="30" font-size="15" font-weight="bold" fill="#2B2118">100</text>
+      <!-- climbers (positioned by JS) -->
+      <g class="climber co" id="climb-CO"><g class="bob">
+        <circle r="16" fill="#E3F2E7" stroke="#2B2118" stroke-width="3"/>
+        <text y="6" text-anchor="middle" font-size="17">🏔️</text>
+        <text y="-22" text-anchor="middle" font-size="13" font-weight="bold" fill="#2B2118" class="score-label"></text>
+      </g></g>
+      <g class="climber nyc" id="climb-NYC"><g class="bob">
+        <circle r="16" fill="#FDF1D2" stroke="#2B2118" stroke-width="3"/>
+        <text y="6" text-anchor="middle" font-size="17">🗽</text>
+        <text y="-22" text-anchor="middle" font-size="13" font-weight="bold" fill="#2B2118" class="score-label"></text>
+      </g></g>
+      <g class="climber ca" id="climb-CA"><g class="bob">
+        <circle r="16" fill="#FDE4DC" stroke="#2B2118" stroke-width="3"/>
+        <text y="6" text-anchor="middle" font-size="17">🌴</text>
+        <text y="-22" text-anchor="middle" font-size="13" font-weight="bold" fill="#2B2118" class="score-label"></text>
+      </g></g>
+    </svg>
+    <div class="race-caption" id="raceCaption">First team to the summit wins eternal glory. ⛰️🏆</div>
+  </div>
+
   <h2>🏅 Hall of Fame</h2>
   <svg class="squig" width="170" height="10" viewBox="0 0 170 10"><path d="M2 6 Q 12 1, 22 6 T 42 6 T 62 6 T 82 6 T 102 6 T 122 6 T 142 6 T 162 6" stroke="#F7B32B" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
   <div class="stickers" id="stickers"></div>
@@ -464,8 +555,36 @@ function render(){
   $('more').style.display = list.length>8 && !showAll ? 'block' : 'none';
   renderFame();
   renderShame();
+  renderRace();
 }
 const esc = s => s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ================= RACE TO 100 ================= */
+const GOAL = 100;
+function renderRace(){
+  const path = document.getElementById('trailPath');
+  if(!path) return;
+  const L = path.getTotalLength();
+  const t = totals();
+  const offsets = {CO:-20, NYC:0, CA:20}; /* keep climbers from stacking */
+  let summited = null;
+  Object.keys(TEAMS).forEach(k=>{
+    const frac = Math.min(t[k]/GOAL, 1);
+    const p = path.getPointAtLength(L*frac);
+    const g = document.getElementById('climb-'+k);
+    const ox = frac>0.9 ? offsets[k]*0.4 : offsets[k]; /* converge near summit */
+    g.setAttribute('transform', `translate(${p.x+ox},${p.y-6})`);
+    g.querySelector('.score-label').textContent = fmt(t[k]);
+    if(t[k]>=GOAL) summited = k;
+  });
+  const cap = document.getElementById('raceCaption');
+  if(summited){
+    cap.innerHTML = `🏆 <strong>${TEAMS[summited].name}</strong> HAS SUMMITED! Eternal glory achieved. Everyone else: better luck next war.`;
+  } else {
+    const lead = Object.keys(TEAMS).sort((a,b)=>t[b]-t[a])[0];
+    cap.innerHTML = `First team to the summit wins eternal glory. ${TEAMS[lead].emoji} needs <strong>${fmt(GOAL-t[lead])}</strong> more points. ⛰️`;
+  }
+}
 
 /* ================= HALL OF FAME ================= */
 function renderFame(){
