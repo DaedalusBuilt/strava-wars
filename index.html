@@ -115,6 +115,59 @@
     font-size:.8rem; text-decoration:underline wavy var(--ca); cursor:pointer; color:var(--ink);
   }
 
+  /* ---------- hall of fame ---------- */
+  .stickers{display:flex; gap:18px; flex-wrap:wrap; justify-content:center; padding:10px 0 4px;}
+  .sticker{
+    width:200px; min-height:200px; border-radius:50%;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:26px 18px; position:relative;
+    border:3px dashed rgba(43,33,24,.55);
+    animation:wobble 5s ease-in-out infinite;
+  }
+  .sticker:nth-child(1){background:radial-gradient(circle at 35% 30%, #FFE9A8, #F7B32B); transform:rotate(-5deg);}
+  .sticker:nth-child(2){background:radial-gradient(circle at 35% 30%, #D8F2DF, #7CC98F); transform:rotate(3deg); animation-delay:.8s;}
+  .sticker:nth-child(3){background:radial-gradient(circle at 35% 30%, #FDDCD2, #F2917A); transform:rotate(-2deg); animation-delay:1.6s;}
+  @keyframes wobble{0%,100%{margin-top:0}50%{margin-top:-7px}}
+  .sticker::before{ /* starburst rays */
+    content:''; position:absolute; inset:-14px; border-radius:50%; z-index:-1;
+    background:repeating-conic-gradient(var(--ink) 0deg 6deg, transparent 6deg 18deg);
+    opacity:.18;
+  }
+  .sticker::after{ /* foil shine sweep */
+    content:''; position:absolute; inset:0; border-radius:50%; overflow:hidden;
+    background:linear-gradient(115deg, transparent 40%, rgba(255,255,255,.65) 50%, transparent 60%);
+    background-size:250% 250%; animation:shine 4.5s ease-in-out infinite; pointer-events:none;
+  }
+  @keyframes shine{0%,60%{background-position:120% 0}100%{background-position:-60% 0}}
+  .sticker .big{font-size:2rem; line-height:1;}
+  .sticker .cat{font-weight:800; font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; margin-top:6px;}
+  .sticker .val{font-family:'Caprasimo',cursive; font-size:1.5rem; margin-top:2px;}
+  .sticker .sub{font-size:.72rem; font-weight:600; opacity:.85; margin-top:4px; line-height:1.35;}
+
+  /* ---------- wall of shame ---------- */
+  .shame{
+    background:#2B2118; color:#FFF6E9; border-radius:14px; padding:22px 20px 18px;
+    text-align:center; position:relative;
+    border:10px solid transparent;
+    border-image:repeating-linear-gradient(45deg,#F7B32B 0 14px,#2B2118 14px 28px) 10;
+    box-shadow:5px 6px 0 rgba(43,33,24,.9);
+  }
+  .shame .siren{font-size:1.6rem; animation:flash 1s steps(2) infinite;}
+  @keyframes flash{50%{opacity:.25}}
+  .shame h3{font-family:'Caprasimo',cursive; font-size:1.15rem; letter-spacing:.04em; margin:6px 0 2px;}
+  .shame .count{
+    font-family:'Caprasimo',cursive; font-size:clamp(2.4rem,10vw,3.6rem); line-height:1.05;
+    color:#F7B32B; text-shadow:3px 3px 0 rgba(0,0,0,.45); margin:6px 0 2px;
+  }
+  .shame .unit{font-size:.85rem; font-weight:600; opacity:.8;}
+  .shame .clock{font-weight:800; font-size:1.05rem; letter-spacing:.12em; margin-top:2px; font-variant-numeric:tabular-nums;}
+  .shame .others{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:14px;}
+  .shame .chip{
+    font-size:.75rem; font-weight:700; padding:4px 12px; border-radius:99px;
+    background:rgba(255,246,233,.12); border:1.5px solid rgba(255,246,233,.35);
+  }
+  .shame .fine{font-size:.62rem; opacity:.55; margin-top:10px; font-style:italic;}
+
   /* ---------- submit ---------- */
   .card{
     background:#fffdf7; border:3px solid var(--ink); border-radius:16px;
@@ -209,6 +262,14 @@
   <svg class="squig" width="190" height="10" viewBox="0 0 190 10"><path d="M2 6 Q 12 1, 22 6 T 42 6 T 62 6 T 82 6 T 102 6 T 122 6 T 142 6 T 162 6 T 182 6" stroke="#F7B32B" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
   <div class="board" id="board"></div>
   <button class="privacy-btn" id="privacyBtn">🙈 “might be better if California’s numbers stay private”</button>
+
+  <h2>🏅 Hall of Fame</h2>
+  <svg class="squig" width="170" height="10" viewBox="0 0 170 10"><path d="M2 6 Q 12 1, 22 6 T 42 6 T 62 6 T 82 6 T 102 6 T 122 6 T 142 6 T 162 6" stroke="#F7B32B" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
+  <div class="stickers" id="stickers"></div>
+
+  <h2>🚨 Wall of Shame</h2>
+  <svg class="squig" width="180" height="10" viewBox="0 0 180 10"><path d="M2 6 Q 12 1, 22 6 T 42 6 T 62 6 T 82 6 T 102 6 T 122 6 T 142 6 T 162 6" stroke="#F2603B" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
+  <div class="shame" id="shame"></div>
 
   <h2>✏️ Claim Your Points</h2>
   <svg class="squig" width="220" height="10" viewBox="0 0 220 10"><path d="M2 6 Q 12 1, 22 6 T 42 6 T 62 6 T 82 6 T 102 6 T 122 6 T 142 6 T 162 6 T 182 6 T 202 6" stroke="#F2603B" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
@@ -401,8 +462,68 @@ function render(){
       <span class="pts-chip">+${fmt(e.pts)}</span></li>`;
   }).join('');
   $('more').style.display = list.length>8 && !showAll ? 'block' : 'none';
+  renderFame();
+  renderShame();
 }
 const esc = s => s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ================= HALL OF FAME ================= */
+function renderFame(){
+  if(entries.length===0) return;
+  // Biggest Day: highest single-team, single-day haul
+  const byDay = {};
+  entries.forEach(e=>{const k=e.team+'|'+e.d; byDay[k]=(byDay[k]||0)+e.pts;});
+  let bdKey=null, bdVal=0;
+  for(const k in byDay) if(byDay[k]>=bdVal){bdVal=byDay[k]; bdKey=k;} /* ties go to most recent */
+  const [bdTeam,bdDate]=bdKey.split('|');
+  const bdDay = new Date(bdDate+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  // Weirdest Point: smallest fractional claim on record
+  const frac = entries.filter(e=>e.pts%1!==0).sort((a,b)=>a.pts-b.pts)[0];
+  const weird = frac
+    ? {val:fmt(frac.pts)+' pt', sub:esc(frac.note||'mystery half point')+' ('+TEAMS[frac.team].emoji+')'}
+    : {val:'???', sub:'no half points claimed… yet'};
+  $('stickers').innerHTML = `
+    <div class="sticker"><span class="big">💥</span><span class="cat">Biggest Day</span>
+      <span class="val">${fmt(bdVal)} pts</span>
+      <span class="sub">${TEAMS[bdTeam].emoji} ${TEAMS[bdTeam].name} · ${bdDay}</span></div>
+    <div class="sticker"><span class="big">🥯</span><span class="cat">Weirdest Point</span>
+      <span class="val">${weird.val}</span>
+      <span class="sub">${weird.sub}</span></div>
+    <div class="sticker"><span class="big">⚖️</span><span class="cat">Most Disputed</span>
+      <span class="val">1.055447552</span>
+      <span class="sub">Asher's un‑Strava'd lax games, per official NLF Commissioner ruling ☎️</span></div>`;
+}
+
+/* ================= WALL OF SHAME ================= */
+function lastScored(team){
+  const ds = entries.filter(e=>e.team===team).map(e=>e.d).sort();
+  return ds.length ? new Date(ds[ds.length-1]+'T12:00:00') : null;
+}
+function renderShame(){
+  if(entries.length===0) return;
+  const droughts = Object.keys(TEAMS).map(k=>{
+    const last = lastScored(k);
+    return {k, ms: last ? Date.now()-last.getTime() : Infinity};
+  }).sort((a,b)=>b.ms-a.ms);
+  const worst = droughts[0];
+  const T = TEAMS[worst.k];
+  const days = Math.floor(worst.ms/86400000);
+  const rem = worst.ms - days*86400000;
+  const hh = String(Math.floor(rem/3600000)).padStart(2,'0');
+  const mm = String(Math.floor(rem%3600000/60000)).padStart(2,'0');
+  const ss = String(Math.floor(rem%60000/1000)).padStart(2,'0');
+  const chips = droughts.slice(1).map(d=>
+    `<span class="chip">${TEAMS[d.k].emoji} ${d.k}: ${d.ms===Infinity?'∞':Math.floor(d.ms/86400000)+'d'} since last point</span>`).join('');
+  $('shame').innerHTML = `
+    <span class="siren">🚨</span>
+    <h3>THIS FAMILY HAS GONE</h3>
+    <div class="count">${days} ${days===1?'DAY':'DAYS'}</div>
+    <div class="clock">+ ${hh}:${mm}:${ss}</div>
+    <div class="unit">without a single point from ${T.emoji} <strong>${T.name}</strong></div>
+    <div class="others">${chips}</div>
+    <div class="fine">counter resets when they finally strava something · safety record last broken: never</div>`;
+}
+setInterval(renderShame, 1000);
 
 /* ================= CONFETTI ================= */
 function confetti(){
