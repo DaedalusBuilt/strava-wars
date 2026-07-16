@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STRAVA WARS üöÄ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Shantell+Sans:ital,wght@0,400;0,600;0,800;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FFF6E9; --ink:#2B2118; --co:#2E7D46; --nyc:#F7B32B; --ca:#F2603B;
+    --co-lite:#E3F2E7; --nyc-lite:#FDF1D2; --ca-lite:#FDE4DC;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper);
+    background-image:radial-gradient(#e8d9be 1.1px, transparent 1.1px);
+    background-size:26px 26px;
+    color:var(--ink);
+    font-family:'Shantell Sans', cursive;
+    overflow-x:hidden;
+  }
+  .wrap{max-width:780px; margin:0 auto; padding:18px 16px 80px;}
+
+  /* ---------- banner ---------- */
+  .banner{
+    text-align:center; padding:26px 10px 18px; position:relative;
+  }
+  .banner h1{
+    font-family:'Caprasimo', cursive;
+    font-size:clamp(2.6rem, 9vw, 4.6rem);
+    line-height:.95;
+    letter-spacing:.5px;
+    transform:rotate(-2deg);
+    text-shadow:4px 4px 0 var(--nyc);
+    -webkit-text-stroke:1px var(--ink);
+  }
+  .banner .sub{
+    display:inline-block; margin-top:14px; font-weight:600; font-size:.95rem;
+    background:var(--ink); color:var(--paper); padding:6px 16px;
+    border-radius:3px 18px 3px 18px; transform:rotate(1.2deg);
+  }
+  .bunting{font-size:1.5rem; letter-spacing:8px; margin-top:6px;}
+
+  /* ---------- ticker ---------- */
+  .ticker{
+    border-top:3px solid var(--ink); border-bottom:3px solid var(--ink);
+    background:#fffdf7; overflow:hidden; white-space:nowrap; margin:14px -16px 26px;
+  }
+  .ticker-inner{
+    display:inline-block; padding:8px 0; animation:tick 42s linear infinite;
+    font-weight:600; font-size:.92rem;
+  }
+  .ticker-inner span{margin:0 28px;}
+  @keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* ---------- section headers ---------- */
+  h2{
+    font-family:'Caprasimo', cursive; font-size:1.7rem; margin:34px 0 4px;
+    transform:rotate(-1deg); display:inline-block;
+  }
+  .squig{display:block; margin:-2px 0 16px;}
+
+  /* ---------- leaderboard ---------- */
+  .board{display:flex; flex-direction:column; gap:16px;}
+  .lane{
+    background:#fffdf7; border:3px solid var(--ink); border-radius:14px;
+    padding:14px 16px 16px; position:relative;
+    box-shadow:5px 6px 0 rgba(43,33,24,.9);
+    transition:transform .2s;
+  }
+  .lane:hover{transform:rotate(-.4deg) scale(1.01);}
+  .lane.first{border-width:4px;}
+  .lane .crown{
+    position:absolute; top:-24px; left:14px; font-size:2rem; transform:rotate(-18deg);
+    animation:bob 2.4s ease-in-out infinite;
+  }
+  @keyframes bob{0%,100%{transform:rotate(-18deg) translateY(0)}50%{transform:rotate(-12deg) translateY(-5px)}}
+  .lane-top{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;}
+  .lane .team-name{font-family:'Caprasimo',cursive; font-size:1.35rem;}
+  .lane .score{
+    margin-left:auto; font-family:'Caprasimo',cursive; font-size:2.1rem; line-height:1;
+    transition:filter .3s;
+  }
+  .lane .badge{
+    font-size:.72rem; font-weight:800; padding:2px 10px; border-radius:99px;
+    border:2px solid var(--ink); background:var(--paper); transform:rotate(2deg);
+  }
+  .track{
+    margin-top:12px; height:34px; border:2.5px dashed rgba(43,33,24,.45);
+    border-radius:99px; position:relative; background:repeating-linear-gradient(
+      90deg, transparent 0 38px, rgba(43,33,24,.05) 38px 40px);
+  }
+  .fill{
+    height:100%; border-radius:99px; width:0%;
+    transition:width 1.2s cubic-bezier(.22,1.2,.36,1); position:relative;
+    min-width:44px;
+  }
+  .runner{
+    position:absolute; right:2px; top:50%; transform:translateY(-54%);
+    font-size:1.5rem; filter:drop-shadow(1px 2px 0 rgba(0,0,0,.25));
+  }
+  .lane.co  .fill{background:var(--co);}
+  .lane.nyc .fill{background:var(--nyc);}
+  .lane.ca  .fill{background:var(--ca);}
+  .lane.co  {background:var(--co-lite);}
+  .lane.nyc {background:var(--nyc-lite);}
+  .lane.ca  {background:var(--ca-lite);}
+  .gap-note{font-size:.8rem; font-weight:600; opacity:.75; margin-top:6px;}
+  .privacy{blur:4px;}
+  .score.hidden-score{filter:blur(10px);}
+  .privacy-btn{
+    margin-top:14px; background:none; border:none; font-family:inherit; font-weight:600;
+    font-size:.8rem; text-decoration:underline wavy var(--ca); cursor:pointer; color:var(--ink);
+  }
+
+  /* ---------- submit ---------- */
+  .card{
+    background:#fffdf7; border:3px solid var(--ink); border-radius:16px;
+    padding:20px; box-shadow:5px 6px 0 rgba(43,33,24,.9);
+  }
+  .team-picks{display:flex; gap:12px; flex-wrap:wrap;}
+  .pick{
+    flex:1; min-width:110px; cursor:pointer; text-align:center; padding:14px 8px 10px;
+    border:3px solid var(--ink); border-radius:12px; background:var(--paper);
+    font-family:'Caprasimo',cursive; font-size:1.05rem; transition:all .15s;
+    user-select:none;
+  }
+  .pick .emoji{display:block; font-size:1.9rem; margin-bottom:4px;}
+  .pick:nth-child(1):hover,.pick:nth-child(1).on{background:var(--co-lite); transform:rotate(-2deg) scale(1.04); box-shadow:3px 4px 0 var(--co);}
+  .pick:nth-child(2):hover,.pick:nth-child(2).on{background:var(--nyc-lite); transform:rotate(1.5deg) scale(1.04); box-shadow:3px 4px 0 var(--nyc);}
+  .pick:nth-child(3):hover,.pick:nth-child(3).on{background:var(--ca-lite); transform:rotate(-1.5deg) scale(1.04); box-shadow:3px 4px 0 var(--ca);}
+  .row{display:flex; gap:14px; margin-top:18px; flex-wrap:wrap;}
+  .field{flex:1; min-width:140px;}
+  label{font-weight:800; font-size:.8rem; display:block; margin-bottom:6px; text-transform:uppercase; letter-spacing:.06em;}
+  input[type=text]{
+    width:100%; padding:11px 12px; font-family:inherit; font-size:1rem;
+    border:2.5px solid var(--ink); border-radius:10px; background:var(--paper);
+    outline:none;
+  }
+  input[type=text]:focus{box-shadow:3px 3px 0 var(--nyc);}
+  .stepper{display:flex; align-items:center; border:2.5px solid var(--ink); border-radius:10px; background:var(--paper); overflow:hidden;}
+  .stepper button{
+    border:none; background:var(--ink); color:var(--paper); font-size:1.3rem; width:44px; height:46px;
+    cursor:pointer; font-family:inherit; font-weight:800;
+  }
+  .stepper button:active{opacity:.7;}
+  .stepper .pts{flex:1; text-align:center; font-family:'Caprasimo',cursive; font-size:1.5rem;}
+  .hint{font-size:.75rem; opacity:.7; margin-top:5px; font-style:italic;}
+  .go{
+    margin-top:20px; width:100%; padding:15px; font-family:'Caprasimo',cursive; font-size:1.4rem;
+    background:var(--ink); color:var(--paper); border:none; border-radius:12px; cursor:pointer;
+    box-shadow:0 5px 0 #6b5643; transition:all .1s; letter-spacing:.5px;
+  }
+  .go:hover{transform:translateY(-2px); box-shadow:0 7px 0 #6b5643;}
+  .go:active{transform:translateY(3px); box-shadow:0 1px 0 #6b5643;}
+  .toast{
+    margin-top:12px; font-weight:600; font-size:.9rem; text-align:center; min-height:1.3em;
+    transition:opacity .3s;
+  }
+
+  /* ---------- feed ---------- */
+  .feed{list-style:none;}
+  .feed li{
+    background:#fffdf7; border:2.5px solid var(--ink); border-radius:10px;
+    padding:10px 14px; margin-bottom:10px; display:flex; gap:10px; align-items:center;
+    font-size:.93rem; box-shadow:3px 3px 0 rgba(43,33,24,.55);
+  }
+  .feed li:nth-child(odd){transform:rotate(.4deg);}
+  .feed li:nth-child(even){transform:rotate(-.4deg);}
+  .feed .dot{width:14px; height:14px; border-radius:50%; border:2px solid var(--ink); flex-shrink:0;}
+  .feed .dot.CO{background:var(--co);} .feed .dot.NYC{background:var(--nyc);} .feed .dot.CA{background:var(--ca);}
+  .feed .pts-chip{
+    margin-left:auto; font-family:'Caprasimo',cursive; font-size:1.05rem; flex-shrink:0;
+  }
+  .feed .meta{opacity:.65; font-size:.78rem;}
+  .show-more{background:none;border:none;font-family:inherit;font-weight:600;cursor:pointer;text-decoration:underline;font-size:.85rem;margin:4px auto;display:block;color:var(--ink);}
+
+  /* ---------- status + footer ---------- */
+  .sync{
+    position:fixed; top:10px; right:10px; z-index:50; font-size:.72rem; font-weight:800;
+    padding:5px 12px; border-radius:99px; border:2px solid var(--ink); background:#fffdf7;
+    box-shadow:2px 2px 0 rgba(43,33,24,.7);
+  }
+  .sync.ok{background:#DFF5E1;} .sync.bad{background:#FDE4DC;}
+  footer{
+    margin-top:56px; font-size:.72rem; line-height:1.7; opacity:.75; text-align:center;
+    border-top:3px double var(--ink); padding-top:18px;
+  }
+  .confetti-bit{position:fixed; top:-20px; z-index:99; font-size:1.3rem; pointer-events:none;}
+  @keyframes fall{to{transform:translateY(110vh) rotate(720deg);}}
+  @media (max-width:520px){ .lane .score{font-size:1.7rem;} }
+</style>
+</head>
+<body>
+<div class="sync" id="sync">‚è≥ connecting‚Ä¶</div>
+<div class="wrap">
+
+  <header class="banner">
+    <div class="bunting">üö©üé™üö©üé™üö©</div>
+    <h1>STRAVA<br>WARS</h1>
+    <div class="sub">CO üèîÔ∏è &nbsp;vs&nbsp; NYC üóΩ &nbsp;vs&nbsp; CA üå¥ &nbsp;¬∑&nbsp; game on since June 30</div>
+  </header>
+
+  <div class="ticker"><div class="ticker-inner" id="ticker"></div></div>
+
+  <h2>üèÜ The Leaderboard</h2>
+  <svg class="squig" width="190" height="10" viewBox="0 0 190 10"><path d="M2 6 Q 12 1, 22 6 T 42 6 T 62 6 T 82 6 T 102 6 T 122 6 T 142 6 T 162 6 T 182 6" stroke="#F7B32B" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
+  <div class="board" id="board"></div>
+  <button class="privacy-btn" id="privacyBtn">üôà ‚Äúmight be better if California‚Äôs numbers stay private‚Äù</button>
+
+  <h2>‚úèÔ∏è Claim Your Points</h2>
+  <svg class="squig" width="220" height="10" viewBox="0 0 220 10"><path d="M2 6 Q 12 1, 22 6 T 42 6 T 62 6 T 82 6 T 102 6 T 122 6 T 142 6 T 162 6 T 182 6 T 202 6" stroke="#F2603B" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
+  <div class="card">
+    <label>Pick your squad</label>
+    <div class="team-picks" id="picks">
+      <div class="pick" data-team="CO"><span class="emoji">üèîÔ∏è</span>Colorado</div>
+      <div class="pick" data-team="NYC"><span class="emoji">üóΩ</span>NYC</div>
+      <div class="pick" data-team="CA"><span class="emoji">üå¥</span>California</div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>Points</label>
+        <div class="stepper">
+          <button type="button" id="minus">‚àí</button>
+          <div class="pts" id="ptsVal">1</div>
+          <button type="button" id="plus">+</button>
+        </div>
+        <div class="hint">half points allowed (see: salmon bagel sprint, 7/12)</div>
+      </div>
+      <div class="field">
+        <label>Who are you?</label>
+        <input type="text" id="who" placeholder="e.g. Asher" maxlength="20">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>What did you do?</label>
+        <input type="text" id="note" placeholder="e.g. tippy single row, almost fell in 5 times" maxlength="90">
+      </div>
+    </div>
+    <button class="go" id="go">STRAVA IT! üì£</button>
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <h2>üìú Recent Glory</h2>
+  <svg class="squig" width="180" height="10" viewBox="0 0 180 10"><path d="M2 6 Q 12 1, 22 6 T 42 6 T 62 6 T 82 6 T 102 6 T 122 6 T 142 6 T 162 6" stroke="#2E7D46" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
+  <ul class="feed" id="feed"></ul>
+  <button class="show-more" id="more" style="display:none">show the whole saga ‚Üì</button>
+
+  <footer>
+    <strong>THE FINE PRINT</strong><br>
+    All activities must be Strava‚Äôd. No Strava, no glory. (‚ÄúDid he strava it? üòÇ‚Äù)<br>
+    Per the NLF Commissioner (reached via speed dial): non-Strava‚Äôd lacrosse games are valued at exactly <strong>1.055447552 points</strong>.<br>
+    Point increase methods in the fine print üëÄ ¬∑ First-responder saves: still zero points. Sorry Asher.<br>
+    Scores live in the family cloud & on this device. Nyeee. ü¶É
+  </footer>
+</div>
+
+<script>
+/* ================= CONFIG ================= */
+const STORE = 'https://getpantry.cloud/apiv1/pantry/a83bb060-6cad-4822-b87e-8493e246cc51/basket/scoreboard';
+const LS_KEY = 'stravaWarsData_v1';
+const TEAMS = {
+  CO:  {name:'Team Colorado',  emoji:'üèîÔ∏è', runner:'üèÉ‚Äç‚ôÇÔ∏è', cls:'co'},
+  NYC: {name:'Team NYC',       emoji:'üóΩ', runner:'üöï',   cls:'nyc'},
+  CA:  {name:'Team California',emoji:'üå¥', runner:'üßó',   cls:'ca'},
+};
+const QUOTES = [
+  '‚ÄúDid he strava it? üòÇ‚Äù','‚ÄúHave to Strava it‚Äù','‚ÄúAlmost not worth the points‚Äù',
+  '‚ÄúCount those points!‚Äù','‚ÄúTime to pull your weight buddy‚Äù','‚ÄúIt‚Äôs on Strava Peeps! Say wow.‚Äù',
+  '‚Äúon faiiyaaa‚Äù','‚ÄúNo points !‚Äù','‚ÄúDavid might need to put his team on his back‚Äù',
+  '‚ÄúPoint increase methods in the fine print üëÄ‚Äù','‚ÄúStrava integration protocol ü§£‚Äù','Nyeee üî•',
+];
+
+/* seed = full history tallied from the group chat, June 30 ‚Üí July 16 */
+const SEED = [
+  ['s1','2026-07-01','NYC',2,'','morning workout üòà'],
+  ['s2','2026-07-01','CA',2,'','last night‚Äôs session'],
+  ['s3','2026-07-01','CO',1,'','1pt for CO üòä'],
+  ['s4','2026-07-01','NYC',1,'','lunch workout'],
+  ['s5','2026-07-01','CA',1,'','1 pt for CA too!'],
+  ['s6','2026-07-02','NYC',1,'','morning point üî•'],
+  ['s7','2026-07-03','CO',4,'','4 points for team Colorado üî•'],
+  ['s8','2026-07-03','CA',2,'','tricky boulder trail to Arlington Point (nearly not worth it)'],
+  ['s9','2026-07-04','CO',1,'','v slow v hot run ü•µ'],
+  ['s10','2026-07-04','CA',2,'','bouldering ‚Äî Jack‚Äôs crazy V4 jump'],
+  ['s11','2026-07-05','NYC',2,'','2 points for team NYC!'],
+  ['s12','2026-07-06','NYC',2,'','rainy morning grind üåßÔ∏è‚òîÔ∏è'],
+  ['s13','2026-07-06','CO',2,'','2 points this morning üî•'],
+  ['s14','2026-07-06','CA',1,'','1pt for ca'],
+  ['s15','2026-07-07','CO',5,'','turkey day: 4 + 1 more ü¶Éüî•'],
+  ['s16','2026-07-08','NYC',1,'','1pt nyc!'],
+  ['s17','2026-07-08','CO',4,'','3 points + 1 corrected next day'],
+  ['s18','2026-07-08','CA',2,'','climbing, 2 points last night'],
+  ['s19','2026-07-08','NYC',1,'','NYC +1'],
+  ['s20','2026-07-09','CO',4,'','4 points today, fyaa üî•'],
+  ['s21','2026-07-09','CA',2,'','more climbing, 2 pts last night'],
+  ['s22','2026-07-12','NYC',1,'','1pt for team nyc!'],
+  ['s23','2026-07-12','CO',0.5,'','walking REALLY fast for salmon bagel sandwiches'],
+  ['s24','2026-07-13','NYC',1,'','+1 NYC'],
+  ['s25','2026-07-14','NYC',5,'','5pts today for team NYC! ü§ô (3 + 1 + 1)'],
+  ['s26','2026-07-16','CO',4,'','+4 CO üòé'],
+  ['s27','2026-07-16','NYC',1,'','+1 NY!'],
+  ['s28','2026-07-16','NYC',1,'','NYC +1'],
+].map(([id,d,team,pts,who,note])=>({id,d,team,pts,who,note}));
+
+/* ================= STATE ================= */
+let entries = [];
+let showAll = false;
+let pts = 1;
+let team = null;
+
+/* ================= HELPERS ================= */
+const $ = id => document.getElementById(id);
+const totals = () => entries.reduce((t,e)=>{t[e.team]=(t[e.team]||0)+e.pts; return t;},{CO:0,NYC:0,CA:0});
+const fmt = n => n % 1 === 0 ? n : n.toFixed(1);
+const loadLocal = () => { try{ return JSON.parse(localStorage.getItem(LS_KEY))||[] }catch(e){ return [] } };
+const saveLocal = () => localStorage.setItem(LS_KEY, JSON.stringify(entries));
+const mergeIn = list => {
+  const seen = new Set(entries.map(e=>e.id));
+  (list||[]).forEach(e=>{ if(e && e.id && !seen.has(e.id)){ entries.push(e); seen.add(e.id);} });
+  entries.sort((a,b)=> a.d===b.d ? (a.id>b.id?1:-1) : (a.d>b.d?1:-1));
+};
+const setSync = (cls,txt) => { const s=$('sync'); s.className='sync '+cls; s.textContent=txt; };
+
+/* ================= CLOUD ================= */
+async function pullCloud(){
+  const r = await fetch(STORE, {cache:'no-store'});
+  if(r.status===400 || r.status===404) return null; /* basket doesn't exist yet */
+  if(!r.ok) throw new Error('cloud read failed');
+  const data = await r.json();
+  return Array.isArray(data.entries) ? data.entries : null;
+}
+async function pushCloud(){
+  const r = await fetch(STORE, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({v:1, updated:new Date().toISOString(), entries})
+  });
+  if(!r.ok) throw new Error('cloud write failed');
+}
+async function syncNow(pushAfter){
+  try{
+    const cloud = await pullCloud();
+    const before = entries.length;
+    mergeIn(cloud);
+    saveLocal();
+    if(pushAfter || cloud===null || entries.length !== (cloud?cloud.length:0)){
+      await pushCloud();
+    }
+    setSync('ok','‚òÅÔ∏è synced');
+    render();
+    return true;
+  }catch(err){
+    setSync('bad','üì¥ saved on device only');
+    render();
+    return false;
+  }
+}
+
+/* ================= RENDER ================= */
+function render(){
+  const t = totals();
+  const order = Object.keys(TEAMS).sort((a,b)=>t[b]-t[a]);
+  const max = Math.max(t[order[0]], 1);
+  const board = $('board');
+  const priv = localStorage.getItem('caPrivate')==='1';
+  board.innerHTML = order.map((k,i)=>{
+    const T = TEAMS[k];
+    const pct = Math.max(10, Math.round(t[k]/max*100));
+    const lead = i===0;
+    const behind = lead ? '' : `<div class="gap-note">${fmt(t[order[0]]-t[k])} pts behind the leader ‚Äî time to pull your weight buddy</div>`;
+    const badge = lead ? 'üëë in the lead' : (i===1 ? 'chasing hard' : 'plotting a comeback');
+    const hideScore = priv && k==='CA';
+    return `<div class="lane ${T.cls} ${lead?'first':''}">
+      ${lead?'<div class="crown">üëë</div>':''}
+      <div class="lane-top">
+        <span class="team-name">${T.emoji} ${T.name}</span>
+        <span class="badge">${badge}</span>
+        <span class="score ${hideScore?'hidden-score':''}">${fmt(t[k])}</span>
+      </div>
+      <div class="track"><div class="fill" data-w="${hideScore?10:pct}"><span class="runner">${T.runner}</span></div></div>
+      ${hideScore?'<div class="gap-note">üôà numbers private, per team CA‚Äôs request</div>':behind}
+    </div>`;
+  }).join('');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    board.querySelectorAll('.fill').forEach(f=>f.style.width=f.dataset.w+'%');
+  }));
+
+  const feed = $('feed');
+  const list = [...entries].reverse();
+  const shown = showAll ? list : list.slice(0,8);
+  feed.innerHTML = shown.map(e=>{
+    const T = TEAMS[e.team]||{emoji:'‚ùì'};
+    const day = new Date(e.d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    return `<li><span class="dot ${e.team}"></span>
+      <span><strong>${e.team}</strong> ${e.note?'‚Äî '+esc(e.note):''}
+      <span class="meta">¬∑ ${day}${e.who?' ¬∑ by '+esc(e.who):''}</span></span>
+      <span class="pts-chip">+${fmt(e.pts)}</span></li>`;
+  }).join('');
+  $('more').style.display = list.length>8 && !showAll ? 'block' : 'none';
+}
+const esc = s => s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ================= CONFETTI ================= */
+function confetti(){
+  const bits = ['üéâ','üî•','‚≠ê','ü§ô','üèÖ','üí•','ü•Ø'];
+  for(let i=0;i<26;i++){
+    const b = document.createElement('div');
+    b.className='confetti-bit';
+    b.textContent = bits[Math.floor(Math.random()*bits.length)];
+    b.style.left = Math.random()*100+'vw';
+    b.style.animation = `fall ${1.6+Math.random()*1.6}s linear forwards`;
+    b.style.animationDelay = Math.random()*0.4+'s';
+    document.body.appendChild(b);
+    setTimeout(()=>b.remove(), 3800);
+  }
+}
+
+/* ================= UI WIRING ================= */
+$('ticker').innerHTML = (QUOTES.concat(QUOTES)).map(q=>`<span>${q}</span>`).join('üèÉ');
+
+document.querySelectorAll('.pick').forEach(p=>{
+  p.addEventListener('click',()=>{
+    document.querySelectorAll('.pick').forEach(x=>x.classList.remove('on'));
+    p.classList.add('on'); team = p.dataset.team;
+  });
+});
+$('plus').onclick = ()=>{ pts=Math.min(20,pts+0.5); $('ptsVal').textContent=fmt(pts); };
+$('minus').onclick = ()=>{ pts=Math.max(0.5,pts-0.5); $('ptsVal').textContent=fmt(pts); };
+
+$('privacyBtn').onclick = ()=>{
+  localStorage.setItem('caPrivate', localStorage.getItem('caPrivate')==='1'?'0':'1');
+  render();
+};
+$('more').onclick = ()=>{ showAll=true; render(); };
+
+const SASS = [
+  'Logged! The commissioner has been notified. üì†',
+  'Nyeee! Points on the board. üî•',
+  'Counted. Say wow. ü§©',
+  'Boom. Hope you Strava‚Äôd it. üëÄ',
+  'On faiiyaaa!! üî•üî•',
+];
+$('go').onclick = async ()=>{
+  const toast = $('toast');
+  if(!team){ toast.textContent='Pick a team first ‚Äî no free agents in this league. ü´°'; return; }
+  const note = $('note').value.trim();
+  const who = $('who').value.trim();
+  if(!note){ toast.textContent='What did you do?? ‚ÄúDid he strava it? üòÇ‚Äù ‚Äî describe it!'; return; }
+  const entry = {
+    id: Date.now().toString(36)+Math.random().toString(36).slice(2,7),
+    d: new Date().toISOString().slice(0,10),
+    team, pts, who, note
+  };
+  entries.push(entry); saveLocal(); render(); confetti();
+  toast.textContent = SASS[Math.floor(Math.random()*SASS.length)];
+  $('note').value='';
+  const ok = await syncNow(true);
+  if(!ok) toast.textContent = 'Saved here ‚Äî will sync to the family cloud next time it wakes up. üí§';
+};
+
+/* ================= BOOT ================= */
+entries = loadLocal();
+if(entries.length===0) mergeIn(SEED); else mergeIn(SEED);
+saveLocal();
+render();
+syncNow(false);
+setInterval(()=>syncNow(false), 120000); /* gentle polling ‚Äî pantry rate limits */
+</script>
+</body>
+</html>
