@@ -122,14 +122,16 @@
     box-shadow:5px 6px 0 rgba(43,33,24,.9); position:relative;
   }
   .mountain-card svg{display:block; width:100%; height:auto;}
-  .cloud{animation:drift 26s linear infinite;}
-  .cloud.c2{animation-duration:38s; animation-delay:-14s;}
+  .mountain-card svg text{font-family:'Shantell Sans',cursive;}
+  .cloud{animation:drift 30s linear infinite;}
+  .cloud.c2{animation-duration:44s; animation-delay:-18s;}
+  .cloud.c3{animation-duration:58s; animation-delay:-30s;}
   @keyframes drift{from{transform:translateX(-140px)}to{transform:translateX(760px)}}
   .climber{transition:transform 1.4s cubic-bezier(.22,1.1,.36,1);}
   .climber .bob{animation:climb 1.8s ease-in-out infinite;}
   .climber.co .bob{animation-delay:.2s} .climber.ca .bob{animation-delay:.6s}
   @keyframes climb{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-  .summit-flag{animation:wave 2.6s ease-in-out infinite; transform-origin:305px 52px;}
+  .summit-flag{animation:wave 2.6s ease-in-out infinite; transform-origin:336px 50px;}
   @keyframes wave{0%,100%{transform:skewY(0deg)}50%{transform:skewY(-4deg)}}
   .race-caption{
     text-align:center; font-size:.8rem; font-weight:600; padding:10px 14px 14px; opacity:.85;
@@ -286,71 +288,168 @@
   <h2>⛰️ Race to 100</h2>
   <svg class="squig" width="160" height="10" viewBox="0 0 160 10"><path d="M2 6 Q 12 1, 22 6 T 42 6 T 62 6 T 82 6 T 102 6 T 122 6 T 142 6" stroke="#2E7D46" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
   <div class="mountain-card">
-    <svg viewBox="0 0 700 420" xmlns="http://www.w3.org/2000/svg" aria-label="Race to 100 mountain">
-      <!-- sun -->
-      <circle cx="72" cy="64" r="30" fill="#F7B32B" stroke="#2B2118" stroke-width="3"/>
-      <g stroke="#2B2118" stroke-width="3" stroke-linecap="round">
-        <line x1="72" y1="16" x2="72" y2="28"/><line x1="72" y1="100" x2="72" y2="112"/>
-        <line x1="24" y1="64" x2="36" y2="64"/><line x1="108" y1="64" x2="120" y2="64"/>
-        <line x1="38" y1="30" x2="47" y2="39"/><line x1="97" y1="89" x2="106" y2="98"/>
-        <line x1="106" y1="30" x2="97" y2="39"/><line x1="47" y1="89" x2="38" y2="98"/>
-      </g>
-      <!-- clouds -->
-      <g class="cloud" fill="#fffdf7" stroke="#2B2118" stroke-width="2.5">
-        <ellipse cx="150" cy="90" rx="42" ry="17"/><ellipse cx="185" cy="80" rx="30" ry="14"/>
-      </g>
-      <g class="cloud c2" fill="#fffdf7" stroke="#2B2118" stroke-width="2.5">
-        <ellipse cx="60" cy="150" rx="36" ry="14"/><ellipse cx="90" cy="142" rx="24" ry="11"/>
-      </g>
-      <!-- mountain -->
-      <path d="M 20 400 Q 120 340 190 260 Q 250 190 305 70 Q 315 52 328 72 Q 390 190 460 265 Q 550 350 680 400 Z"
-            fill="#E7D6B8" stroke="#2B2118" stroke-width="4" stroke-linejoin="round"/>
-      <!-- snow cap -->
-      <path d="M 270 145 Q 300 80 305 70 Q 315 52 328 72 Q 345 105 362 140 Q 340 128 330 148 Q 315 122 300 150 Q 285 132 270 145 Z"
-            fill="#fffdf7" stroke="#2B2118" stroke-width="3.5" stroke-linejoin="round"/>
-      <!-- trees at base -->
-      <g fill="#2E7D46" stroke="#2B2118" stroke-width="2.5">
-        <path d="M 590 400 l 14 -34 l 14 34 z"/><path d="M 620 400 l 17 -44 l 17 44 z"/>
-      </g>
-      <text x="40" y="330" font-size="22">🐐</text>
-      <!-- trail (dashed) : also used to position climbers -->
-      <path id="trailPath" d="M 60 396 C 150 380 200 360 230 330 C 270 290 220 275 260 240 C 300 205 330 200 300 165 C 280 140 300 110 316 78"
-            fill="none" stroke="#2B2118" stroke-width="3" stroke-dasharray="2 11" stroke-linecap="round" opacity=".65"/>
-      <!-- altitude signs -->
-      <g font-family="inherit" font-weight="bold" font-size="13" fill="#2B2118">
-        <text x="238" y="352" transform="rotate(-6 238 352)">25</text>
-        <text x="242" y="262" transform="rotate(5 242 262)">50</text>
-        <text x="318" y="192" transform="rotate(-5 318 192)">75</text>
-      </g>
-      <!-- base camp sign -->
-      <g>
-        <line x1="52" y1="412" x2="52" y2="380" stroke="#2B2118" stroke-width="3.5"/>
-        <rect x="20" y="366" width="80" height="22" rx="4" fill="#F7B32B" stroke="#2B2118" stroke-width="3"/>
-        <text x="60" y="382" text-anchor="middle" font-size="12" font-weight="bold" fill="#2B2118">BASE CAMP</text>
-      </g>
-      <!-- summit flag -->
-      <g class="summit-flag">
-        <line x1="316" y1="78" x2="316" y2="30" stroke="#2B2118" stroke-width="3.5"/>
-        <path d="M 316 30 L 358 40 L 316 52 Z" fill="#F2603B" stroke="#2B2118" stroke-width="3" stroke-linejoin="round"/>
-      </g>
-      <text x="340" y="30" font-size="15" font-weight="bold" fill="#2B2118">100</text>
-      <!-- climbers (positioned by JS) -->
-      <g class="climber co" id="climb-CO"><g class="bob">
-        <circle r="16" fill="#E3F2E7" stroke="#2B2118" stroke-width="3"/>
-        <text y="6" text-anchor="middle" font-size="17">🏔️</text>
-        <text y="-22" text-anchor="middle" font-size="13" font-weight="bold" fill="#2B2118" class="score-label"></text>
-      </g></g>
-      <g class="climber nyc" id="climb-NYC"><g class="bob">
-        <circle r="16" fill="#FDF1D2" stroke="#2B2118" stroke-width="3"/>
-        <text y="6" text-anchor="middle" font-size="17">🗽</text>
-        <text y="-22" text-anchor="middle" font-size="13" font-weight="bold" fill="#2B2118" class="score-label"></text>
-      </g></g>
-      <g class="climber ca" id="climb-CA"><g class="bob">
-        <circle r="16" fill="#FDE4DC" stroke="#2B2118" stroke-width="3"/>
-        <text y="6" text-anchor="middle" font-size="17">🌴</text>
-        <text y="-22" text-anchor="middle" font-size="13" font-weight="bold" fill="#2B2118" class="score-label"></text>
-      </g></g>
-    </svg>
+    <svg viewBox="0 0 700 460" xmlns="http://www.w3.org/2000/svg" aria-label="Race to 100 mountain">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#A9D9EC"/>
+      <stop offset="0.55" stop-color="#CFEAF3"/>
+      <stop offset="0.85" stop-color="#FDEBC9"/>
+    </linearGradient>
+    <linearGradient id="meadow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#A6D08D"/>
+      <stop offset="1" stop-color="#8FBF7C"/>
+    </linearGradient>
+  </defs>
+
+  <!-- sky -->
+  <rect x="0" y="0" width="700" height="460" fill="url(#sky)"/>
+
+  <!-- sun, upper right -->
+  <circle cx="598" cy="78" r="34" fill="#F7B32B" stroke="#2B2118" stroke-width="3.5"/>
+  <g stroke="#2B2118" stroke-width="3" stroke-linecap="round" opacity="0.9">
+    <line x1="598" y1="22" x2="598" y2="34"/><line x1="598" y1="122" x2="598" y2="134"/>
+    <line x1="542" y1="78" x2="554" y2="78"/><line x1="642" y1="78" x2="654" y2="78"/>
+    <line x1="558" y1="38" x2="567" y2="47"/><line x1="629" y1="109" x2="638" y2="118"/>
+    <line x1="638" y1="38" x2="629" y2="47"/><line x1="567" y1="109" x2="558" y2="118"/>
+  </g>
+
+  <!-- distant range (no outline, hazy) -->
+  <path d="M -10 300 L 90 205 L 165 268 L 240 190 L 330 300 Z" fill="#B7C6E0" opacity="0.75"/>
+  <path d="M 300 300 L 420 175 L 505 250 L 580 200 L 700 300 Z" fill="#B7C6E0" opacity="0.6"/>
+  <path d="M 66 228 L 90 205 L 114 227 L 103 235 L 90 224 L 78 236 Z" fill="#FFFFFF" opacity="0.85"/>
+  <path d="M 396 200 L 420 175 L 445 197 L 432 206 L 420 195 L 408 208 Z" fill="#FFFFFF" opacity="0.8"/>
+
+  <!-- mid hills -->
+  <path d="M -10 460 Q 100 330 220 372 Q 300 398 360 380 Q 480 340 560 368 Q 640 394 710 360 L 710 460 Z"
+        fill="#9CC48E" opacity="0.9"/>
+
+  <!-- clouds -->
+  <g class="cloud c1" fill="#FFFFFF" stroke="#2B2118" stroke-width="2.5" opacity="0.95">
+    <ellipse cx="130" cy="92" rx="44" ry="16"/><ellipse cx="163" cy="80" rx="28" ry="12"/>
+  </g>
+  <g class="cloud c2" fill="#FFFFFF" stroke="#2B2118" stroke-width="2" opacity="0.8">
+    <ellipse cx="470" cy="60" rx="34" ry="12"/><ellipse cx="495" cy="51" rx="20" ry="9"/>
+  </g>
+  <g class="cloud c3" fill="#FFFFFF" opacity="0.65">
+    <ellipse cx="240" cy="150" rx="30" ry="10"/><ellipse cx="262" cy="143" rx="18" ry="8"/>
+  </g>
+
+  <!-- ===== MAIN PEAK ===== -->
+  <!-- single outlined silhouette -->
+  <path d="M 336 84 Q 322 92 306 130 Q 280 190 240 250 Q 190 320 96 400 Q 60 428 40 442 L 632 442 Q 612 428 576 400 Q 482 320 432 250 Q 392 190 366 130 Q 350 92 336 84 Z"
+        fill="#EAD6AE" stroke="#2B2118" stroke-width="4" stroke-linejoin="round"/>
+  <!-- shadow face: fill only, organic boundary, no stroke -->
+  <path d="M 336 86 Q 349 93 365 130 Q 391 190 431 250 Q 481 320 574 399 Q 610 427 628 440 L 348 440 Q 336 380 338 300 Q 341 200 336 86 Z"
+        fill="#D2B489"/>
+  <!-- contour doodles -->
+  <g stroke="#2B2118" stroke-width="2" fill="none" opacity="0.18" stroke-linecap="round">
+    <path d="M 270 240 q 30 12 62 8"/>
+    <path d="M 220 320 q 45 16 95 10"/>
+    <path d="M 380 250 q 26 14 54 12"/>
+    <path d="M 420 330 q 40 18 84 14"/>
+  </g>
+
+  <!-- snow cap: one outlined shape, shaded half strokeless -->
+  <path d="M 336 84 Q 322 92 306 130 Q 292 160 276 192 L 296 176 L 312 200 L 328 170 L 336 186 L 344 170 L 360 200 L 376 176 L 396 192 Q 380 160 366 130 Q 350 92 336 84 Z"
+        fill="#FFFFFF" stroke="#2B2118" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M 336 88 Q 349 95 364 130 Q 377 158 393 189 L 376 176 L 360 200 L 344 170 L 337 184 Q 340 140 336 88 Z"
+        fill="#E4EDF2"/>
+
+  <!-- summit cairn + flag -->
+  <g>
+    <line x1="336" y1="104" x2="336" y2="38" stroke="#2B2118" stroke-width="4" stroke-linecap="round"/>
+    <g class="summit-flag">
+      <path d="M 336 38 L 388 48 L 336 62 Z" fill="#F2603B" stroke="#2B2118" stroke-width="3" stroke-linejoin="round"/>
+      <text x="349" y="53" font-size="13" font-weight="bold" fill="#FFF6E9">100</text>
+    </g>
+    <text x="298" y="46" font-size="15">✨</text>
+    <text x="392" y="80" font-size="12">✨</text>
+  </g>
+
+  <!-- trail -->
+  <path id="trailPath"
+        d="M 95 402 C 180 396 250 388 292 368 C 340 345 300 338 250 332 C 200 326 190 318 232 300 C 290 275 345 278 368 258 C 390 238 340 232 300 226 C 262 220 268 205 302 192 C 340 178 360 172 352 152 C 344 134 330 128 336 110"
+        fill="none" stroke="#2B2118" stroke-width="3.5" stroke-dasharray="1.5 10" stroke-linecap="round" opacity="0.6"/>
+
+  <!-- milestone signs at exact 25/50/75% of trail (computed); plates hang BELOW
+       the trail so climbers (which ride above it) never cover them -->
+  <g font-size="11" font-weight="bold" text-anchor="middle">
+    <g transform="translate(291.2,368.4) rotate(-4)">
+      <line x1="0" y1="2" x2="0" y2="12" stroke="#2B2118" stroke-width="2.5"/>
+      <rect x="-14" y="12" width="28" height="16" rx="3.5" fill="#FFF6E9" stroke="#2B2118" stroke-width="2.5"/>
+      <text y="24" fill="#2B2118">25</text>
+    </g>
+    <g transform="translate(251.1,292.7) rotate(3)">
+      <line x1="0" y1="2" x2="0" y2="12" stroke="#2B2118" stroke-width="2.5"/>
+      <rect x="-14" y="12" width="28" height="16" rx="3.5" fill="#FFF6E9" stroke="#2B2118" stroke-width="2.5"/>
+      <text y="24" fill="#2B2118">50</text>
+    </g>
+    <g transform="translate(313.2,228.0) rotate(-3)">
+      <line x1="0" y1="2" x2="0" y2="12" stroke="#2B2118" stroke-width="2.5"/>
+      <rect x="-14" y="12" width="28" height="16" rx="3.5" fill="#FFF6E9" stroke="#2B2118" stroke-width="2.5"/>
+      <text y="24" fill="#2B2118">75</text>
+    </g>
+  </g>
+
+  <!-- goat on a ledge -->
+  <text x="416" y="222" font-size="20" text-anchor="middle">🐐</text>
+
+  <!-- ===== FOREGROUND ===== -->
+  <path d="M -10 442 Q 170 424 350 434 Q 530 444 710 430 L 710 460 L -10 460 Z"
+        fill="url(#meadow)" stroke="#2B2118" stroke-width="3"/>
+
+  <!-- base camp: tent + fire + sign -->
+  <g>
+    <path d="M 48 430 L 72 392 L 96 430 Z" fill="#F2603B" stroke="#2B2118" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M 66 430 L 72 414 L 78 430 Z" fill="#2B2118" opacity="0.85"/>
+    <text x="116" y="436" font-size="17" text-anchor="middle">🔥</text>
+  </g>
+  <g transform="translate(95,402)">
+    <line x1="0" y1="0" x2="0" y2="24" stroke="#2B2118" stroke-width="3"/>
+    <rect x="-42" y="24" width="84" height="20" rx="4" fill="#F7B32B" stroke="#2B2118" stroke-width="3"/>
+    <text y="38.5" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#2B2118">BASE CAMP</text>
+  </g>
+
+  <!-- pines, right side -->
+  <g stroke="#2B2118" stroke-width="2.5" stroke-linejoin="round">
+    <line x1="618" y1="444" x2="618" y2="430" stroke-width="3"/>
+    <path d="M 600 436 L 618 396 L 636 436 Z" fill="#2E7D46"/>
+    <path d="M 604 420 L 618 388 L 632 420 Z" fill="#3B9159"/>
+    <line x1="656" y1="448" x2="656" y2="436" stroke-width="3"/>
+    <path d="M 641 440 L 656 408 L 671 440 Z" fill="#2E7D46"/>
+    <line x1="582" y1="446" x2="582" y2="438" stroke-width="3"/>
+    <path d="M 570 440 L 582 416 L 594 440 Z" fill="#3B9159"/>
+  </g>
+
+  <!-- flowers -->
+  <g font-size="12">
+    <text x="180" y="446">🌼</text><text x="255" y="452">🌸</text><text x="330" y="448">🌼</text>
+    <text x="440" y="452">🌸</text><text x="520" y="446">🌼</text>
+  </g>
+
+  <!-- climbers (JS positions these; preview transforms baked for render test) -->
+  <g class="climber co" id="climb-CO" transform="translate(294.7,360.7)"><g class="bob">
+    <path d="M 0 14 L -6 6 L 6 6 Z" fill="#2B2118"/>
+    <circle r="15" cy="-6" fill="#FFFFFF" stroke="#2E7D46" stroke-width="3.5"/>
+    <text y="-1" text-anchor="middle" font-size="15">🏔️</text>
+    <rect x="-19" y="-42" width="38" height="18" rx="9" fill="#2E7D46" stroke="#2B2118" stroke-width="2.5"/>
+    <text y="-28.5" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#FFFFFF" class="score-label">25.5</text>
+  </g></g>
+  <g class="climber nyc" id="climb-NYC" transform="translate(245.7,377.3)"><g class="bob">
+    <path d="M 0 14 L -6 6 L 6 6 Z" fill="#2B2118"/>
+    <circle r="15" cy="-6" fill="#FFFFFF" stroke="#E5A81B" stroke-width="3.5"/>
+    <text y="-1" text-anchor="middle" font-size="15">🗽</text>
+    <rect x="-19" y="-42" width="38" height="18" rx="9" fill="#E5A81B" stroke="#2B2118" stroke-width="2.5"/>
+    <text y="-28.5" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#2B2118" class="score-label">19</text>
+  </g></g>
+  <g class="climber ca" id="climb-CA" transform="translate(190.5,387)"><g class="bob">
+    <path d="M 0 14 L -6 6 L 6 6 Z" fill="#2B2118"/>
+    <circle r="15" cy="-6" fill="#FFFFFF" stroke="#F2603B" stroke-width="3.5"/>
+    <text y="-1" text-anchor="middle" font-size="15">🌴</text>
+    <rect x="-19" y="-42" width="38" height="18" rx="9" fill="#F2603B" stroke="#2B2118" stroke-width="2.5"/>
+    <text y="-28.5" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#FFFFFF" class="score-label">12</text>
+  </g></g>
+</svg>
     <div class="race-caption" id="raceCaption">First team to the summit wins eternal glory. ⛰️🏆</div>
   </div>
 
@@ -573,7 +672,7 @@ function renderRace(){
     const p = path.getPointAtLength(L*frac);
     const g = document.getElementById('climb-'+k);
     const ox = frac>0.9 ? offsets[k]*0.4 : offsets[k]; /* converge near summit */
-    g.setAttribute('transform', `translate(${p.x+ox},${p.y-6})`);
+    g.setAttribute('transform', `translate(${p.x+ox},${p.y-14})`);
     g.querySelector('.score-label').textContent = fmt(t[k]);
     if(t[k]>=GOAL) summited = k;
   });
