@@ -250,6 +250,12 @@
     margin-left:auto; font-family:'Caprasimo',cursive; font-size:1.05rem; flex-shrink:0;
   }
   .feed .meta{opacity:.65; font-size:.78rem;}
+  .feed .zap{
+    background:none; border:none; cursor:pointer; font-size:.85rem; color:var(--ink);
+    opacity:.25; padding:2px 4px; flex-shrink:0; font-family:inherit; border-radius:6px;
+  }
+  .feed .zap:hover{opacity:1; color:#C0392B; background:rgba(192,57,43,.1);}
+  .go:disabled{opacity:.55; cursor:wait; transform:none;}
   .show-more{background:none;border:none;font-family:inherit;font-weight:600;cursor:pointer;text-decoration:underline;font-size:.85rem;margin:4px auto;display:block;color:var(--ink);}
 
   /* ---------- status + footer ---------- */
@@ -512,7 +518,7 @@
 <script>
 /* ================= CONFIG ================= */
 const STORE = 'https://getpantry.cloud/apiv1/pantry/a83bb060-6cad-4822-b87e-8493e246cc51/basket/scoreboard';
-const LS_KEY = 'stravaWarsData_v1';
+const LS_KEY = 'stravaWarsData_v2';
 const TEAMS = {
   CO:  {name:'Team Colorado',  emoji:'🏔️', runner:'🏃‍♂️', cls:'co'},
   NYC: {name:'Team NYC',       emoji:'🗽', runner:'🚕',   cls:'nyc'},
@@ -559,6 +565,7 @@ const SEED = [
 
 /* ================= STATE ================= */
 let entries = [];
+let deletedIds = {};   /* tombstones: id -> timestamp; deletions propagate to every device */
 let showAll = false;
 let pts = 1;
 let team = null;
@@ -567,11 +574,19 @@ let team = null;
 const $ = id => document.getElementById(id);
 const totals = () => entries.reduce((t,e)=>{t[e.team]=(t[e.team]||0)+e.pts; return t;},{CO:0,NYC:0,CA:0});
 const fmt = n => n % 1 === 0 ? n : n.toFixed(1);
-const loadLocal = () => { try{ return JSON.parse(localStorage.getItem(LS_KEY))||[] }catch(e){ return [] } };
-const saveLocal = () => localStorage.setItem(LS_KEY, JSON.stringify(entries));
+const loadLocal = () => {
+  try{
+    const raw = JSON.parse(localStorage.getItem(LS_KEY));
+    if(Array.isArray(raw)) return {entries:raw, deleted:{}}; /* migrate v1 */
+    return raw && raw.entries ? raw : {entries:[], deleted:{}};
+  }catch(e){ return {entries:[], deleted:{}} }
+};
+const saveLocal = () => localStorage.setItem(LS_KEY, JSON.stringify({entries, deleted:deletedIds}));
+const applyTombstones = () => { entries = entries.filter(e=>!deletedIds[e.id]); };
 const mergeIn = list => {
   const seen = new Set(entries.map(e=>e.id));
-  (list||[]).forEach(e=>{ if(e && e.id && !seen.has(e.id)){ entries.push(e); seen.add(e.id);} });
+  (list||[]).forEach(e=>{ if(e && e.id && !seen.has(e.id) && !deletedIds[e.id]){ entries.push(e); seen.add(e.id);} });
+  applyTombstones();
   entries.sort((a,b)=> a.d===b.d ? (a.id>b.id?1:-1) : (a.d>b.d?1:-1));
 };
 const setSync = (cls,txt) => { const s=$('sync'); s.className='sync '+cls; s.textContent=txt; };
@@ -593,11 +608,22 @@ async function cloudGet(){
   if(r.status===400 || r.status===404) return null;
   if(!r.ok) throw new Error('read '+r.status);
   const data = await r.json();
-  return Array.isArray(data.entries) ? data.entries : null;
+  let list = [], dels = {};
+  if(Array.isArray(data.entries)) list = data.entries;            /* legacy v1 */
+  else if(data.entries && typeof data.entries==='object') list = Object.values(data.entries);
+  if(Array.isArray(data.deleted)) data.deleted.forEach(i=>dels[i]=1);
+  else if(data.deleted && typeof data.deleted==='object') dels = data.deleted;
+  return {list, dels, raw:data};
 }
 async function cloudPost(){
-  const r = await spaced(()=>fetch(STORE, {method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({v:1, updated:new Date().toISOString(), entries})}));
+  /* entries stored as id-keyed map: the backend deep-merges objects by key,
+     so concurrent pushes can never duplicate rows the way arrays did */
+  const body = JSON.stringify({
+    v:2, updated:new Date().toISOString(),
+    entries:Object.fromEntries(entries.map(e=>[e.id,e])),
+    deleted:deletedIds
+  });
+  const r = await spaced(()=>fetch(STORE, {method:'POST', headers:{'Content-Type':'application/json'}, body}));
   if(!r.ok) throw new Error('write '+r.status);
 }
 async function engine(){
@@ -607,10 +633,19 @@ async function engine(){
     setSync('','⏳ syncing…');
     if(Date.now() - lastPullAt > 45000){
       const cloud = await cloudGet();
-      const cloudIds = new Set((cloud||[]).map(e=>e.id));
-      mergeIn(cloud);
       lastPullAt = Date.now();
-      if(entries.some(e=>!cloudIds.has(e.id))) dirty = true;
+      if(cloud){
+        Object.assign(deletedIds, cloud.dels);
+        mergeIn(cloud.list);
+        const cloudIds = new Set(cloud.list.map(e=>e.id));
+        const needsRepair = cloud.list.length !== cloudIds.size            /* dupes in cloud */
+          || Array.isArray(cloud.raw.entries)                              /* legacy format */
+          || cloud.list.some(e=>deletedIds[e.id])                          /* deleted still present */
+          || entries.some(e=>!cloudIds.has(e.id))                          /* we know entries cloud lacks */
+          || Object.keys(deletedIds).some(k=>!cloud.dels[k]);              /* we know deletions cloud lacks */
+        if(needsRepair) dirty = true;
+      } else dirty = true;
+      applyTombstones();
       saveLocal();
     }
     if(dirty){
@@ -670,7 +705,8 @@ function render(){
     return `<li><span class="dot ${e.team}"></span>
       <span><strong>${e.team}</strong> ${e.note?'— '+esc(e.note):''}
       <span class="meta">· ${day}${e.who?' · by '+esc(e.who):''}</span></span>
-      <span class="pts-chip">+${fmt(e.pts)}</span></li>`;
+      <span class="pts-chip">+${fmt(e.pts)}</span>
+      <button class="zap" data-id="${e.id}" title="remove this entry">✕</button></li>`;
   }).join('');
   $('more').style.display = list.length>8 && !showAll ? 'block' : 'none';
   renderFame();
@@ -797,6 +833,15 @@ $('privacyBtn').onclick = ()=>{
 };
 $('more').onclick = ()=>{ showAll=true; render(); };
 
+$('feed').addEventListener('click', ev=>{
+  const b = ev.target.closest('.zap'); if(!b) return;
+  const e = entries.find(x=>x.id===b.dataset.id); if(!e) return;
+  if(!confirm(`Remove "+${fmt(e.pts)} ${e.team}${e.note?' — '+e.note:''}"?\nThis deletes it from the scoreboard for everyone.`)) return;
+  deletedIds[e.id] = Date.now();
+  applyTombstones(); saveLocal(); render();
+  dirty = true; engine();
+});
+
 const SASS = [
   'Logged! The commissioner has been notified. 📠',
   'Nyeee! Points on the board. 🔥',
@@ -815,6 +860,7 @@ $('go').onclick = async ()=>{
     d: new Date().toISOString().slice(0,10),
     team, pts, who, note
   };
+  const go = $('go'); go.disabled = true; setTimeout(()=>go.disabled=false, 4000); /* no double-taps */
   entries.push(entry); saveLocal(); render(); confetti();
   toast.textContent = SASS[Math.floor(Math.random()*SASS.length)];
   $('note').value='';
@@ -822,8 +868,9 @@ $('go').onclick = async ()=>{
 };
 
 /* ================= BOOT ================= */
-entries = loadLocal();
-if(entries.length===0) mergeIn(SEED); else mergeIn(SEED);
+const _local = loadLocal();
+entries = _local.entries; deletedIds = _local.deleted || {};
+mergeIn(SEED);
 saveLocal();
 render();
 engine();
